@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: temperature_monitoring
+      POSTGRES_USER: tempuser
+      POSTGRES_PASSWORD: temppass123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - temp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tempuser -d temperature_monitoring"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    name: temp_postgres_data
+
+networks:
+  temp-network:
+    driver: bridge
+    name: temp_network
