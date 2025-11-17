@@ -1,15 +1,15 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
     container_name: postgres
     environment:
-      POSTGRES_DB: temperature_monitoring
-      POSTGRES_USER: tempuser
-      POSTGRES_PASSWORD: temppass123
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=temperature_monitoring
     ports:
       - "5432:5432"
     volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init-databases.sql
       - postgres_data:/var/lib/postgresql/data
     networks:
       - temp-network
