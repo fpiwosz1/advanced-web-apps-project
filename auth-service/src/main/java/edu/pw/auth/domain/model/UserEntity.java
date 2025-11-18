@@ -1,9 +1,11 @@
 package edu.pw.auth.domain.model;
 
+import io.micronaut.core.annotation.Introspected;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
+@Introspected
 public class UserEntity {
 
     @Id

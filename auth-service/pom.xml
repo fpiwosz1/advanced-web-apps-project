@@ -98,6 +98,11 @@
     </dependency>
 
     <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <scope>runtime</scope>
@@ -177,6 +182,32 @@
             <arg>-Amicronaut.processing.module=authservice</arg>
           </compilerArgs>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.44.2</version>
+        <configuration combine.self="override">
+          <java>
+            <importOrder>
+              <order>java,javax,org,,com,com.cisco</order>
+            </importOrder>
+            <removeUnusedImports />
+            <eclipse>
+              <version>${spotless-eclipse-formatter-jdt-version}</version>
+              <file>${project.basedir}/java-code-style.xml</file>
+            </eclipse>
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <id>reformat-code</id>
+            <goals>
+              <goal>apply</goal>
+            </goals>
+            <phase>process-resources</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

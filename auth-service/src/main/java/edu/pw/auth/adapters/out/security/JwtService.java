@@ -1,14 +1,14 @@
 package edu.pw.auth.adapters.out.security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import io.micronaut.context.annotation.Value;
-import jakarta.inject.Singleton;
-
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import io.micronaut.context.annotation.Value;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class JwtService {
@@ -18,8 +18,8 @@ public class JwtService {
     private final long refreshTokenExpirationMs;
 
     public JwtService(@Value("${jwt.secret}") String secret,
-                      @Value("${jwt.access-token-expiration-ms}") long accessTokenExpirationMs,
-                      @Value("${jwt.refresh-token-expiration-ms}") long refreshTokenExpirationMs) {
+            @Value("${jwt.access-token-expiration-ms}") long accessTokenExpirationMs,
+            @Value("${jwt.refresh-token-expiration-ms}") long refreshTokenExpirationMs) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.accessTokenExpirationMs = accessTokenExpirationMs;
         this.refreshTokenExpirationMs = refreshTokenExpirationMs;

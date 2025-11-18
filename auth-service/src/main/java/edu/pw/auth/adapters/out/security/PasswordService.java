@@ -1,6 +1,7 @@
 package edu.pw.auth.adapters.out.security;
 
 import org.mindrot.jbcrypt.BCrypt;
+
 import jakarta.inject.Singleton;
 
 @Singleton
@@ -13,7 +14,8 @@ public class PasswordService {
     }
 
     public boolean verify(String plainPassword, String hashed) {
-        if (plainPassword == null || hashed == null) return false;
+        if (plainPassword == null || hashed == null)
+            return false;
         return BCrypt.checkpw(plainPassword, hashed);
     }
 }

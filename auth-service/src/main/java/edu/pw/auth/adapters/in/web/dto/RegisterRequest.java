@@ -1,6 +1,9 @@
 package edu.pw.auth.adapters.in.web.dto;
 
-public class RegisterRequest {
-    public String username;
-    public String password;
-}
+import io.micronaut.serde.annotation.Serdeable;
+
+@Serdeable
+public record RegisterRequest(
+        String username,
+        String password
+) {}
