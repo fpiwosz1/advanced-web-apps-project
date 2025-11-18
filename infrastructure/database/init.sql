@@ -23,7 +23,7 @@ CREATE TABLE measurements (
     id SERIAL PRIMARY KEY,
     series_id INTEGER NOT NULL REFERENCES series(id) ON DELETE CASCADE,
     value DECIMAL(10, 2) NOT NULL,
-    timestamp TIMESTAMP NOT NULL,
+    timestamp TIMESTAMPTZ NOT NULL,
     label VARCHAR(100)
 );
 
@@ -53,3 +53,22 @@ CREATE TRIGGER trigger_validate_measurement_value
     BEFORE INSERT OR UPDATE ON measurements
     FOR EACH ROW
     EXECUTE FUNCTION validate_measurement_value();
+
+-- db users
+CREATE USER authuser WITH PASSWORD 'auth_password';
+CREATE USER tempuser WITH PASSWORD 'temp_password';
+
+GRANT CONNECT ON DATABASE temperature_monitoring TO authuser;
+GRANT CONNECT ON DATABASE temperature_monitoring TO tempuser;
+
+GRANT USAGE ON SCHEMA public TO authuser;
+GRANT USAGE ON SCHEMA public TO tempuser;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE users TO authuser;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE series TO tempuser;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE measurements TO tempuser;
+
+GRANT USAGE, SELECT ON SEQUENCE users_id_seq TO authuser;
+GRANT USAGE, SELECT ON SEQUENCE series_id_seq TO tempuser;
+GRANT USAGE, SELECT ON SEQUENCE measurements_id_seq TO tempuser;
