@@ -25,9 +25,12 @@ services:
       dockerfile: Dockerfile
     container_name: auth-service
     environment:
-      - DATASOURCE_USERNAME=authuser
-      - DATASOURCE_PASSWORD=auth_password
-      - JWT_SECRET=change_me_please
+      - JWT_SECRET=36fc5468a8033f734ac2e210bb888b932f3ce4c6283857f6cb01c695a2c93882
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=temperature_monitoring
+      - DB_USER=authuser
+      - DB_PASSWORD=auth_password
     ports:
       - "8081:8081"
     depends_on:

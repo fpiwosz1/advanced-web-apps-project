@@ -158,6 +158,11 @@
           <annotationProcessorPaths combine.children="append">
             <path>
               <groupId>io.micronaut</groupId>
+              <artifactId>micronaut-core-processor</artifactId>
+              <version>${micronaut.core.version}</version>
+            </path>
+            <path>
+              <groupId>io.micronaut</groupId>
               <artifactId>micronaut-http-validation</artifactId>
               <version>${micronaut.core.version}</version>
             </path>

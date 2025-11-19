@@ -6,12 +6,12 @@ micronaut:
 
 datasources:
   default:
-    #url: jdbc:postgresql://postgres:5432/temperature_monitoring
-    url: jdbc:postgresql://localhost:5432/temperature_monitoring
-    username: ${DATASOURCE_USERNAME:authuser}
-    password: ${DATASOURCE_PASSWORD:auth_password}
+    db-type: postgresql
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driverClassName: org.postgresql.Driver
     maximumPoolSize: 5
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
 
 jpa:
   default:
@@ -23,6 +23,6 @@ jpa:
         format_sql: false
 
 jwt:
-  secret: ${JWT_SECRET:change_me_please}
+  secret: ${JWT_SECRET}
   access-token-expiration-ms: ${JWT_ACCESS_EXPIRATION_MS:900000} # 15 min
   refresh-token-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000} # 7 days
