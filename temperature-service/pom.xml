@@ -20,7 +20,7 @@
     <micronaut.runtime>netty</micronaut.runtime>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>edu.pw.auth.aot.generated</micronaut.aot.packageName>
-    <exec.mainClass>edu.pw.auth.Application</exec.mainClass>
+    <exec.mainClass>edu.pw.tempmeasuring.Application</exec.mainClass>
     <spotless-eclipse-formatter-jdt-version>4.33</spotless-eclipse-formatter-jdt-version>
   </properties>
 
