@@ -1,0 +1,26 @@
+micronaut:
+  application:
+    name: temperature-service
+  server:
+    port: ${MICRONAUT_SERVER_PORT:8082}
+
+datasources:
+  default:
+    db-type: postgresql
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driverClassName: org.postgresql.Driver
+    maximumPoolSize: 5
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+jpa:
+  default:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        show_sql: false
+        format_sql: false
+
+jwt:
+  secret: ${JWT_SECRET}

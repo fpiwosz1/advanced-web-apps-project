@@ -38,6 +38,26 @@ services:
         condition: service_healthy
     networks:
       - temp-network
+  temperature-service:
+    build:
+      context: ../temperature-service
+      dockerfile: Dockerfile
+    container_name: temperature-service
+    environment:
+      - JWT_SECRET=36fc5468a8033f734ac2e210bb888b932f3ce4c6283857f6cb01c695a2c93882
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=temperature_monitoring
+      - DB_USER=tempuser
+      - DB_PASSWORD=temp_password
+      - MICRONAUT_SERVER_PORT=8082
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - temp-network
 
 volumes:
   postgres_data:
