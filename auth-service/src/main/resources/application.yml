@@ -1,0 +1,28 @@
+micronaut:
+  application:
+    name: auth-service
+  server:
+    port: ${MICRONAUT_SERVER_PORT:8081}
+
+datasources:
+  default:
+    #url: jdbc:postgresql://postgres:5432/temperature_monitoring
+    url: jdbc:postgresql://localhost:5432/temperature_monitoring
+    username: ${DATASOURCE_USERNAME:authuser}
+    password: ${DATASOURCE_PASSWORD:auth_password}
+    driverClassName: org.postgresql.Driver
+    maximumPoolSize: 5
+
+jpa:
+  default:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        show_sql: false
+        format_sql: false
+
+jwt:
+  secret: ${JWT_SECRET:change_me_please}
+  access-token-expiration-ms: ${JWT_ACCESS_EXPIRATION_MS:900000} # 15 min
+  refresh-token-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000} # 7 days

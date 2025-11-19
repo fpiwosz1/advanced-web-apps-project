@@ -1,0 +1,12 @@
+datasources:
+  default:
+    db-type: h2
+    reactive: false
+    username: sa
+    password: ""
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driverClassName: org.h2.Driver
+    options:
+      host: localhost
+      port: 5432
+      database: testdb
