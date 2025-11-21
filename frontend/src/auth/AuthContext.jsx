@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
     if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
     const expMs = getJwtExpMs(token);
     if (!expMs) return;
-    const leadTimeMs = 60_000; // 60s
+    const leadTimeMs = 60_000;
     const delay = Math.max(expMs - Date.now() - leadTimeMs, 0);
     refreshTimerRef.current = setTimeout(async () => {
       try {

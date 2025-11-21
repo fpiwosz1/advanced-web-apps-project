@@ -71,3 +71,42 @@ export function getJwtExpMs(token) {
     return null;
   }
 }
+
+export async function fetchMeasurements({
+  seriesIds = [],
+  from = null,
+  to = null,
+} = {}) {
+  const params = new URLSearchParams();
+  if (seriesIds.length) params.set("seriesIds", seriesIds.join(","));
+  if (from) params.set("from", from);
+  if (to) params.set("to", to);
+  const url = `${TEMP_API}/api/v1/measurements?${params.toString()}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch measurements: ${res.status}`);
+  return res.json();
+}
+
+export async function createMeasurement(accessToken, payload) {
+  const res = await fetch(`${TEMP_API}/api/v1/measurements`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`Failed to create measurement: ${res.status}`);
+  return res.json();
+}
+
+export async function deleteMeasurement(accessToken, id) {
+  const res = await fetch(`${TEMP_API}/api/v1/measurements/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!res.ok && res.status !== 204)
+    throw new Error(`Failed to delete measurement: ${res.status}`);
+}
