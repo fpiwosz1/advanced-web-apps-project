@@ -17,6 +17,11 @@ export default function App() {
   const refreshSeries = () => setRefreshSeriesKey((k) => k + 1);
   const refreshMeasurements = () => setRefreshMeasurementsKey((k) => k + 1);
 
+  const handleSeriesChanged = () => {
+    setRefreshSeriesKey((k) => k + 1);
+    setRefreshMeasurementsKey((k) => k + 1);
+  };
+
   return (
     <AuthProvider>
       <Header
@@ -24,7 +29,7 @@ export default function App() {
         onOpenCreateSeries={() => setSeriesOpen(true)}
         onOpenCreateMeasurement={() => setMeasurementOpen(true)}
       />
-      <Home reloadKey={refreshSeriesKey} />
+      <Home reloadKey={refreshSeriesKey} onChanged={handleSeriesChanged} />
       <MeasurementsPanel
         reloadKey={refreshMeasurementsKey}
         onOpenCreate={() => setMeasurementOpen(true)}

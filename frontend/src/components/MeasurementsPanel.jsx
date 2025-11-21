@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchSeries, fetchMeasurements, deleteMeasurement } from "../api";
 import { useAuth } from "../auth/AuthContext";
 import { formatLocalInput, localInputToIsoUtc } from "../utils/time";
+import MeasurementsChart from "./MeasurementsChart";
 
 export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
   const { token, user } = useAuth();
@@ -17,19 +18,30 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const [selectedPoint, setSelectedPoint] = useState(null);
 
-  // Pobierz serie raz
   useEffect(() => {
     (async () => {
       try {
         const s = await fetchSeries();
         setSeries(s);
-        setSelectedSeriesIds(s.map((x) => x.id));
       } catch {
         setErr("Nie udało się pobrać serii.");
       }
     })();
-  }, []);
+  }, [reloadKey]);
+
+  useEffect(() => {
+    if (series.length && selectedSeriesIds.length === 0) {
+      setSelectedSeriesIds(series.map((x) => x.id));
+    }
+  }, [series, selectedSeriesIds.length]);
+
+  useEffect(() => {
+    if (!series.length) return;
+    const validIds = new Set(series.map((s) => s.id));
+    setSelectedSeriesIds((prev) => prev.filter((id) => validIds.has(id)));
+  }, [series]);
 
   const load = async () => {
     try {
@@ -41,6 +53,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
         to: localInputToIsoUtc(toLocal),
       });
       setItems(data);
+      setSelectedPoint(null);
     } catch {
       setErr("Nie udało się pobrać pomiarów.");
     } finally {
@@ -48,21 +61,11 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
     }
   };
 
-  // Inicjalne pobranie po wczytaniu serii
   useEffect(() => {
     if (series.length) {
       load();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [series.length]);
-
-  // Reaguj na zewnętrzny reloadKey (np. po dodaniu/usunięciu)
-  useEffect(() => {
-    if (series.length) {
-      load();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reloadKey]);
+  }, [series.length, selectedSeriesIds, fromLocal, toLocal]);
 
   const seriesById = useMemo(() => {
     const map = new Map();
@@ -106,6 +109,13 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
           </button>
         )}
       </div>
+
+      <MeasurementsChart
+        items={items}
+        seriesById={seriesById}
+        selectedSeriesIds={selectedSeriesIds}
+        selected={selectedPoint}
+      />
 
       <div style={filters}>
         <div>
@@ -179,7 +189,16 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
               items.map((m) => {
                 const s = seriesById.get(m.seriesId);
                 return (
-                  <tr key={m.id}>
+                  <tr
+                    key={m.id}
+                    onClick={() =>
+                      setSelectedPoint({
+                        seriesId: m.seriesId,
+                        t: new Date(m.timestamp).getTime(),
+                      })
+                    }
+                    style={{ cursor: "pointer" }}
+                  >
                     <td>{m.id}</td>
                     <td>
                       <span style={{ ...dot, background: s?.color }} />{" "}
@@ -194,7 +213,10 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
                       {user && (
                         <button
                           style={btnSmallOutline}
-                          onClick={() => remove(m.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            remove(m.id);
+                          }}
                         >
                           Usuń
                         </button>

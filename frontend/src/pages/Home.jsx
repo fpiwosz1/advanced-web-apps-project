@@ -35,6 +35,7 @@ export default function Home({ reloadKey = 0 }) {
     try {
       await deleteSeries(token, id);
       await load();
+      onChanged?.();
     } catch {
       alert("Nie udało się usunąć serii.");
     }
