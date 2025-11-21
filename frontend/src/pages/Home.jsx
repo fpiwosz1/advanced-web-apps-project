@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { fetchSeries } from "../api";
+import { fetchSeries, deleteSeries } from "../api";
+import { useAuth } from "../auth/AuthContext";
 
 export default function Home({ reloadKey = 0 }) {
+  const { token, user } = useAuth();
   const [series, setSeries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
@@ -21,8 +23,22 @@ export default function Home({ reloadKey = 0 }) {
 
   useEffect(() => {
     load();
-    // reaguje za każdym razem, gdy App zwiększy reloadKey
   }, [reloadKey]);
+
+  const removeSeries = async (id) => {
+    if (!user || !token) {
+      alert("Wymagane zalogowanie.");
+      return;
+    }
+    if (!confirm("Usunąć tę serię? Spowoduje to usunięcie jej pomiarów."))
+      return;
+    try {
+      await deleteSeries(token, id);
+      await load();
+    } catch {
+      alert("Nie udało się usunąć serii.");
+    }
+  };
 
   if (loading) return <div style={{ padding: 16 }}>Ładowanie...</div>;
   if (err) return <div style={{ padding: 16, color: "red" }}>{err}</div>;
@@ -36,9 +52,26 @@ export default function Home({ reloadKey = 0 }) {
         <div style={grid}>
           {series.map((s) => (
             <div key={s.id} style={card}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ ...colorDot, background: s.color }} />
-                <strong>{s.name}</strong>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ ...colorDot, background: s.color }} />
+                  <strong>{s.name}</strong>
+                </div>
+                {user && (
+                  <button
+                    style={btnSmallOutline}
+                    onClick={() => removeSeries(s.id)}
+                  >
+                    Usuń
+                  </button>
+                )}
               </div>
               {s.description && (
                 <div style={{ color: "#666", marginTop: 4 }}>
@@ -72,4 +105,12 @@ const colorDot = {
   height: 12,
   borderRadius: 6,
   display: "inline-block",
+};
+const btnSmallOutline = {
+  padding: "4px 8px",
+  background: "#fff",
+  color: "#FF4500",
+  border: "1px solid #FF4500",
+  borderRadius: 4,
+  cursor: "pointer",
 };

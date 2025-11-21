@@ -110,3 +110,15 @@ export async function deleteMeasurement(accessToken, id) {
   if (!res.ok && res.status !== 204)
     throw new Error(`Failed to delete measurement: ${res.status}`);
 }
+
+export async function deleteSeries(accessToken, id) {
+  const res = await fetch(`${TEMP_API}/api/v1/series/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!res.ok && res.status !== 204) {
+    throw new Error(`Failed to delete series: ${res.status}`);
+  }
+}
