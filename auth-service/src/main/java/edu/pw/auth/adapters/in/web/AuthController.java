@@ -1,12 +1,20 @@
 package edu.pw.auth.adapters.in.web;
 
 import edu.pw.auth.adapters.in.web.api.AuthApi;
-import edu.pw.auth.adapters.in.web.dto.*;
+import edu.pw.auth.adapters.in.web.dto.AuthResponse;
+import edu.pw.auth.adapters.in.web.dto.ChangePasswordRequest;
+import edu.pw.auth.adapters.in.web.dto.LoginRequest;
+import edu.pw.auth.adapters.in.web.dto.RegisterRequest;
+import edu.pw.auth.adapters.in.web.dto.UserDto;
 import edu.pw.auth.adapters.in.web.mapper.UserMapper;
 import edu.pw.auth.adapters.out.security.JwtService;
 import edu.pw.auth.application.AuthUseCase;
+import edu.pw.auth.config.AuthCookieProperties;
+import edu.pw.auth.domain.model.UserEntity;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.cookie.Cookie;
 
 @Controller("/api/v1/auth")
 public class AuthController implements AuthApi {
@@ -14,18 +22,24 @@ public class AuthController implements AuthApi {
     private final AuthUseCase authUseCase;
     private final JwtService jwtService;
     private final UserMapper userMapper;
+    private final AuthCookieProperties cookieProps;
+    private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 
-    public AuthController(AuthUseCase authUseCase, JwtService jwtService, UserMapper userMapper) {
+    public AuthController(AuthUseCase authUseCase,
+            JwtService jwtService,
+            UserMapper userMapper,
+            AuthCookieProperties cookieProps) {
         this.authUseCase = authUseCase;
         this.jwtService = jwtService;
         this.userMapper = userMapper;
+        this.cookieProps = cookieProps;
     }
 
     @Override
     public HttpResponse<UserDto> register(RegisterRequest req) {
         try {
-            var user = authUseCase.register(req.username(), req.password());
-            var dto = userMapper.toDto(user);
+            UserEntity user = authUseCase.register(req.username(), req.password());
+            UserDto dto = userMapper.toDto(user);
             return HttpResponse.created(dto);
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest();
@@ -35,18 +49,27 @@ public class AuthController implements AuthApi {
     @Override
     public HttpResponse<AuthResponse> login(LoginRequest req) {
         try {
-            var resp = authUseCase.login(req.username(), req.password());
-            return HttpResponse.ok(resp);
+            AuthResponse resp = authUseCase.login(req.username(), req.password());
+            Cookie refreshCookie = getRefreshCookie(resp);
+            return HttpResponse.ok(resp)
+                    .cookie(refreshCookie);
         } catch (IllegalArgumentException e) {
             return HttpResponse.unauthorized();
         }
     }
 
     @Override
-    public HttpResponse<AuthResponse> refresh(RefreshRequest req) {
+    public HttpResponse<AuthResponse> refresh(HttpRequest<?> request) {
+        Cookie cookie = request.getCookies()
+                .get(REFRESH_TOKEN_COOKIE_NAME);
+        if (cookie == null) {
+            return HttpResponse.unauthorized();
+        }
         try {
-            var resp = authUseCase.refresh(req.refreshToken());
-            return HttpResponse.ok(resp);
+            AuthResponse resp = authUseCase.refresh(cookie.getValue());
+            Cookie refreshCookie = getRefreshCookie(resp);
+            return HttpResponse.ok(resp)
+                    .cookie(refreshCookie);
         } catch (IllegalArgumentException e) {
             return HttpResponse.unauthorized();
         }
@@ -70,5 +93,35 @@ public class AuthController implements AuthApi {
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest(e.getMessage());
         }
+    }
+
+    @Override
+    public HttpResponse<Object> logout(HttpRequest<?> request) {
+        Cookie clear = Cookie.of(REFRESH_TOKEN_COOKIE_NAME, "")
+                .httpOnly(true)
+                .secure(cookieProps.isSecure())
+                .sameSite(cookieProps.getSameSite())
+                .path(cookieProps.getPath())
+                .maxAge(0);
+        if (cookieProps.getDomain() != null && !cookieProps.getDomain()
+                .isBlank()) {
+            clear = clear.domain(cookieProps.getDomain());
+        }
+        return HttpResponse.noContent()
+                .cookie(clear);
+    }
+
+    private Cookie getRefreshCookie(AuthResponse response) {
+        Cookie refreshCookie = Cookie.of(REFRESH_TOKEN_COOKIE_NAME, response.refreshToken())
+                .httpOnly(true)
+                .secure(cookieProps.isSecure())
+                .sameSite(cookieProps.getSameSite())
+                .path(cookieProps.getPath())
+                .maxAge((int) (jwtService.getRefreshTokenExpirationMs() / 1000));
+        if (cookieProps.getDomain() != null && !cookieProps.getDomain()
+                .isBlank()) {
+            refreshCookie = refreshCookie.domain(cookieProps.getDomain());
+        }
+        return refreshCookie;
     }
 }

@@ -7,12 +7,12 @@ export async function fetchSeries() {
   return res.json();
 }
 
-export async function createSeries(token, payload) {
+export async function createSeries(accessToken, payload) {
   const res = await fetch(`${TEMP_API}/api/v1/series`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify(payload),
   });
@@ -22,20 +22,52 @@ export async function createSeries(token, payload) {
 
 export async function login(username, password) {
   const res = await fetch(`${AUTH_API}/api/v1/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ username, password }),
   });
-  if (!res.ok) throw new Error('Invalid credentials');
-  return res.json(); // { accessToken, refreshToken, expiresInMs }
+  if (!res.ok) throw new Error("Invalid credentials");
+  return res.json(); // { accessToken, refreshToken?, expiresInMs }
+}
+
+export async function refresh() {
+  const res = await fetch(`${AUTH_API}/api/v1/auth/refresh`, {
+    method: "POST",
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Refresh failed");
+  return res.json(); // { accessToken, refreshToken?, expiresInMs }
+}
+
+export async function logout() {
+  const res = await fetch(`${AUTH_API}/api/v1/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+  if (!res.ok && res.status !== 204) throw new Error("Logout failed");
 }
 
 export function getUsernameFromToken(token) {
   try {
-    const [, payload] = token.split('.');
-    const json = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
-    return json.username ?? 'admin';
+    const [, payload] = token.split(".");
+    const json = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    return json.username ?? "admin";
   } catch {
-    return 'admin';
+    return "admin";
+  }
+}
+
+export function getJwtExpMs(token) {
+  try {
+    const [, payload] = token.split(".");
+    const json = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    return json.exp ? json.exp * 1000 : null;
+  } catch {
+    return null;
   }
 }
