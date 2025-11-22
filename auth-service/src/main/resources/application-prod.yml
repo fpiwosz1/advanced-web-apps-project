@@ -4,7 +4,7 @@ micronaut:
       configurations:
         default:
           allowed-origins:
-            - ec2-98-80-145-93.compute-1.amazonaws.com
+            - filippiwosz.eu
 
 auth:
   cookie:
