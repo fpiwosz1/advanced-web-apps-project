@@ -15,6 +15,9 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.cookie.Cookie;
+import org.slf4j.Logger;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Controller("/api/v1/auth")
 public class AuthController implements AuthApi {
@@ -24,6 +27,8 @@ public class AuthController implements AuthApi {
     private final UserMapper userMapper;
     private final AuthCookieProperties cookieProps;
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
+
+    private static final Logger log = getLogger(AuthController.class);
 
     public AuthController(AuthUseCase authUseCase,
             JwtService jwtService,
@@ -38,6 +43,7 @@ public class AuthController implements AuthApi {
     @Override
     public HttpResponse<UserDto> register(RegisterRequest req) {
         try {
+            log.info("Registering user: {}", req.username());
             UserEntity user = authUseCase.register(req.username(), req.password());
             UserDto dto = userMapper.toDto(user);
             return HttpResponse.created(dto);
@@ -49,6 +55,7 @@ public class AuthController implements AuthApi {
     @Override
     public HttpResponse<AuthResponse> login(LoginRequest req) {
         try {
+            log.info("Logging in user: {}", req.username());
             AuthResponse resp = authUseCase.login(req.username(), req.password());
             Cookie refreshCookie = getRefreshCookie(resp);
             return HttpResponse.ok(resp)
@@ -60,6 +67,7 @@ public class AuthController implements AuthApi {
 
     @Override
     public HttpResponse<AuthResponse> refresh(HttpRequest<?> request) {
+        log.info("Refreshing token");
         Cookie cookie = request.getCookies()
                 .get(REFRESH_TOKEN_COOKIE_NAME);
         if (cookie == null) {
@@ -80,6 +88,7 @@ public class AuthController implements AuthApi {
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             return HttpResponse.unauthorized();
         }
+        log.info("Changing password");
         String token = authorization.substring(7);
         var claimsOpt = jwtService.parseClaims(token);
         if (claimsOpt.isEmpty()) {
@@ -97,6 +106,7 @@ public class AuthController implements AuthApi {
 
     @Override
     public HttpResponse<Object> logout(HttpRequest<?> request) {
+        log.info("Logging out");
         Cookie clear = Cookie.of(REFRESH_TOKEN_COOKIE_NAME, "")
                 .httpOnly(true)
                 .secure(cookieProps.isSecure())

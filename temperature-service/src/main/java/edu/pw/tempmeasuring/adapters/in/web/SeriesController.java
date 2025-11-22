@@ -12,6 +12,9 @@ import edu.pw.tempmeasuring.application.SeriesUseCase;
 import edu.pw.tempmeasuring.domain.model.SeriesEntity;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
+import org.slf4j.Logger;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Controller("/api/v1/series")
 public class SeriesController implements SeriesApi {
@@ -19,6 +22,8 @@ public class SeriesController implements SeriesApi {
     private final SeriesUseCase seriesUseCase;
     private final JwtService jwtService;
     private final ModelMapper mapper;
+
+    private static final Logger log = getLogger(SeriesController.class);
 
     public SeriesController(SeriesUseCase seriesUseCase, JwtService jwtService, ModelMapper mapper) {
         this.seriesUseCase = seriesUseCase;
@@ -28,7 +33,8 @@ public class SeriesController implements SeriesApi {
 
     @Override
     public HttpResponse<List<SeriesDto>> list() {
-        var all = seriesUseCase.list()
+        log.info("Listing all series");
+        List<SeriesDto> all = seriesUseCase.list()
                 .stream()
                 .map(mapper::toSeriesDto)
                 .toList();
@@ -37,6 +43,7 @@ public class SeriesController implements SeriesApi {
 
     @Override
     public HttpResponse<SeriesDto> get(Long id) {
+        log.info("Getting series with id: {}", id);
         return seriesUseCase.get(id)
                 .map(s -> HttpResponse.ok(mapper.toSeriesDto(s)))
                 .orElse(HttpResponse.notFound());
@@ -46,6 +53,7 @@ public class SeriesController implements SeriesApi {
     public HttpResponse<SeriesDto> create(CreateSeriesRequest req, String authorization) {
         if (!isAuthorized(authorization))
             return HttpResponse.unauthorized();
+        log.info("Creating new series: {}", req.name());
         try {
             var entity = new SeriesEntity(req.name(), req.description(), req.minValue(), req.maxValue(),
                     req.color(), req.icon(), req.unit());
@@ -60,6 +68,7 @@ public class SeriesController implements SeriesApi {
     public HttpResponse<SeriesDto> update(Long id, UpdateSeriesRequest req, String authorization) {
         if (!isAuthorized(authorization))
             return HttpResponse.unauthorized();
+        log.info("Updating series with id: {}", id);
         try {
             var update = new SeriesEntity(req.name(), req.description(), req.minValue(), req.maxValue(),
                     req.color(), req.icon(), req.unit());
@@ -74,6 +83,7 @@ public class SeriesController implements SeriesApi {
     public HttpResponse<String> delete(Long id, String authorization) {
         if (!isAuthorized(authorization))
             return HttpResponse.unauthorized();
+        log.info("Deleting series with id: {}", id);
         seriesUseCase.delete(id);
         return HttpResponse.noContent();
     }
