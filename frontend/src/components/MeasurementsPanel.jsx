@@ -15,12 +15,6 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
   const [initializedSelection, setInitializedSelection] = useState(false);
 
   useEffect(() => {
-    if (!series.length) return;
-    const validIds = new Set(series.map((s) => s.id));
-    setSelectedSeriesIds((prev) => prev.filter((id) => validIds.has(id)));
-  }, [series]);
-  
-  useEffect(() => {
     if (series.length && !initializedSelection) {
       setSelectedSeriesIds(series.map((x) => x.id));
       setInitializedSelection(true);
@@ -58,12 +52,6 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
       }
     })();
   }, [reloadKey]);
-
-  useEffect(() => {
-    if (series.length && selectedSeriesIds.length === 0) {
-      setSelectedSeriesIds(series.map((x) => x.id));
-    }
-  }, [series, selectedSeriesIds.length]);
 
   useEffect(() => {
     if (!series.length) return;
@@ -201,6 +189,20 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
           <button style={btnOutline} onClick={load}>
             Zastosuj
           </button>
+          <button
+            style={btnOutline}
+            onClick={() => setSelectedSeriesIds(series.map((s) => s.id))}
+            disabled={!series.length}
+          >
+            Zaznacz wszystkie
+          </button>
+          <button
+            style={btnOutline}
+            onClick={() => setSelectedSeriesIds([])}
+            disabled={selectedSeriesIds.length === 0}
+          >
+            Wyczyść
+          </button>
         </div>
       </div>
 
@@ -309,12 +311,6 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
                         </>
                       )}
                     </td>
-                    <MeasurementForm
-                      open={editOpen}
-                      onClose={() => setEditOpen(false)}
-                      initial={editingMeasurement}
-                      onSaved={onSaved}
-                    />
                   </tr>
                 );
               })
@@ -322,6 +318,12 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
           </tbody>
         </table>
       )}
+      <MeasurementForm
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        initial={editingMeasurement}
+        onSaved={onSaved}
+      />
     </section>
   );
 }
