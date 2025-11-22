@@ -4,8 +4,7 @@ micronaut:
       configurations:
         default:
           allowed-origins:
-            # TODO: Update with your frontend production URL
-            - https://frontend-example.com
+            - ec2-98-80-145-93.compute-1.amazonaws.com
 
 auth:
   cookie:
