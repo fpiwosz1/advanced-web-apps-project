@@ -4,7 +4,7 @@ micronaut:
       configurations:
         default:
           allowed-origins:
-            - filippiwosz.eu
+            - advancedwebapps.filippiwosz.eu
 
 auth:
   cookie:
