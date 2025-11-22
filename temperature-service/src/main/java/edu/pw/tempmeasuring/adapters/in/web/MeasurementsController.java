@@ -15,6 +15,9 @@ import edu.pw.tempmeasuring.domain.model.MeasurementEntity;
 import edu.pw.tempmeasuring.domain.model.SeriesEntity;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
+import org.slf4j.Logger;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Controller("/api/v1/measurements")
 public class MeasurementsController implements MeasurementsApi {
@@ -23,6 +26,8 @@ public class MeasurementsController implements MeasurementsApi {
     private final SeriesUseCase seriesUseCase;
     private final JwtService jwtService;
     private final ModelMapper mapper;
+
+    private static final Logger log = getLogger(MeasurementsController.class);
 
     public MeasurementsController(MeasurementUseCase measurementUseCase,
             SeriesUseCase seriesUseCase,
@@ -36,7 +41,8 @@ public class MeasurementsController implements MeasurementsApi {
 
     @Override
     public HttpResponse<List<MeasurementDto>> list(List<Long> seriesIds, OffsetDateTime from, OffsetDateTime to) {
-        var items = measurementUseCase.list(seriesIds, from, to)
+        log.info("Listing measurements for seriesIds: {}, from: {}, to: {}", seriesIds, from, to);
+        List<MeasurementDto> items = measurementUseCase.list(seriesIds, from, to)
                 .stream()
                 .map(mapper::toMeasurementDto)
                 .toList();
@@ -45,6 +51,7 @@ public class MeasurementsController implements MeasurementsApi {
 
     @Override
     public HttpResponse<MeasurementDto> get(Long id) {
+        log.info("Getting measurement with id: {}", id);
         return measurementUseCase.get(id)
                 .map(m -> HttpResponse.ok(mapper.toMeasurementDto(m)))
                 .orElse(HttpResponse.notFound());
@@ -54,6 +61,7 @@ public class MeasurementsController implements MeasurementsApi {
     public HttpResponse<MeasurementDto> create(CreateMeasurementRequest req, String authorization) {
         if (!isAuthorized(authorization))
             return HttpResponse.unauthorized();
+        log.info("Creating measurement for seriesId: {}", req.seriesId());
         try {
             SeriesEntity series = seriesUseCase.get(req.seriesId())
                     .orElseThrow(() -> new IllegalArgumentException("Series not found"));
@@ -69,6 +77,7 @@ public class MeasurementsController implements MeasurementsApi {
     public HttpResponse<MeasurementDto> update(Long id, UpdateMeasurementRequest req, String authorization) {
         if (!isAuthorized(authorization))
             return HttpResponse.unauthorized();
+        log.info("Updating measurement with id: {}", id);
         try {
             var current = measurementUseCase.get(id)
                     .orElseThrow(() -> new IllegalArgumentException("Measurement not found"));
@@ -84,6 +93,7 @@ public class MeasurementsController implements MeasurementsApi {
     public HttpResponse<String> delete(Long id, String authorization) {
         if (!isAuthorized(authorization))
             return HttpResponse.unauthorized();
+        log.info("Deleting measurement with id: {}", id);
         measurementUseCase.delete(id);
         return HttpResponse.noContent();
     }
