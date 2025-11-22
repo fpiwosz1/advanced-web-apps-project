@@ -18,7 +18,7 @@ export default function Home({ reloadKey = 0, onChanged }) {
       const data = await fetchSeries();
       setSeries(data);
     } catch {
-      setErr("Nie udało się pobrać serii.");
+      setErr("Unable to fetch series.");
     } finally {
       setLoading(false);
     }
@@ -30,10 +30,10 @@ export default function Home({ reloadKey = 0, onChanged }) {
 
   const removeSeries = async (id) => {
     if (!user || !token) {
-      alert("Wymagane zalogowanie.");
+      alert("Login required.");
       return;
     }
-    if (!confirm("Usunąć tę serię? Spowoduje to usunięcie jej pomiarów."))
+    if (!confirm("Delete this series? All associated measurements will be lost."))
       return;
     try {
       await deleteSeries(token, id);
@@ -41,7 +41,7 @@ export default function Home({ reloadKey = 0, onChanged }) {
       onChanged?.();
     } catch (err) {
       console.error(err);
-      alert("Nie udało się usunąć serii.");
+      alert("Unable to delete series.");
     }
   };
 

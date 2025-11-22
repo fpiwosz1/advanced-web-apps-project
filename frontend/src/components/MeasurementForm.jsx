@@ -37,7 +37,7 @@ export default function MeasurementForm({
             label: initial?.label ?? "",
           }));
         } catch {
-          setErr("Nie udało się pobrać serii.");
+          setErr("Unable to fetch series");
         }
       })();
     }
@@ -75,7 +75,7 @@ export default function MeasurementForm({
       }
       onClose();
     } catch {
-      setErr("Nie udało się zapisać pomiaru.");
+      setErr("Unable to save measurement.");
     }
   };
 

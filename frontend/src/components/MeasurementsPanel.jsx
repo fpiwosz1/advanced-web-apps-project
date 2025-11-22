@@ -48,7 +48,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
         const s = await fetchSeries();
         setSeries(s);
       } catch {
-        setErr("Nie udało się pobrać serii.");
+        setErr("Unable to fetch series");
       }
     })();
   }, [reloadKey]);
@@ -76,7 +76,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
       setItems(data);
       setSelectedPoint(null);
     } catch {
-      setErr("Nie udało się pobrać pomiarów.");
+      setErr("Unable to fetch measurements.");
     } finally {
       setLoading(false);
     }
@@ -102,15 +102,15 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
 
   const remove = async (id) => {
     if (!token) {
-      alert("Wymagane zalogowanie.");
+      alert("Login required");
       return;
     }
-    if (!confirm("Usunąć ten pomiar?")) return;
+    if (!confirm("Delete this measurement?")) return;
     try {
       await deleteMeasurement(token, id);
       load();
     } catch {
-      alert("Nie udało się usunąć pomiaru.");
+      alert("Unable to delete measurement");
     }
   };
 

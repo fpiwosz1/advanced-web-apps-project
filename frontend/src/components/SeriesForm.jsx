@@ -80,7 +80,7 @@ export default function SeriesForm({
       }
       onClose();
     } catch {
-      setErr("Nie udało się zapisać serii.");
+      setErr("Unable to save series.");
     }
   };
 
