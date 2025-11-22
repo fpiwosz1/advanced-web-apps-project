@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { fetchSeries, deleteSeries } from "../api";
 import { useAuth } from "../auth/AuthContext";
+import SeriesForm from "../components/SeriesForm";
 
 export default function Home({ reloadKey = 0 }) {
   const { token, user } = useAuth();
   const [series, setSeries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+  const [editing, setEditing] = useState(null);
+  const [editOpen, setEditOpen] = useState(false);
 
   const load = async () => {
     try {
@@ -44,6 +47,15 @@ export default function Home({ reloadKey = 0 }) {
   if (loading) return <div style={{ padding: 16 }}>Ładowanie...</div>;
   if (err) return <div style={{ padding: 16, color: "red" }}>{err}</div>;
 
+  const openEdit = (s) => {
+    setEditing(s);
+    setEditOpen(true);
+  };
+  const onSaved = async () => {
+    await load();
+    onChanged?.();
+  };
+
   return (
     <main style={{ padding: 16, display: "grid", gap: 12 }}>
       <h2>Serie temperatur</h2>
@@ -66,12 +78,17 @@ export default function Home({ reloadKey = 0 }) {
                   <strong>{s.name}</strong>
                 </div>
                 {user && (
-                  <button
-                    style={btnSmallOutline}
-                    onClick={() => removeSeries(s.id)}
-                  >
-                    Usuń
-                  </button>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button style={btnSmallOutline} onClick={() => openEdit(s)}>
+                      Edytuj
+                    </button>
+                    <button
+                      style={btnSmallOutline}
+                      onClick={() => removeSeries(s.id)}
+                    >
+                      Usuń
+                    </button>
+                  </div>
                 )}
               </div>
               {s.description && (
@@ -86,6 +103,12 @@ export default function Home({ reloadKey = 0 }) {
           ))}
         </div>
       )}
+      <SeriesForm
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        initial={editing}
+        onSaved={onSaved}
+      />
     </main>
   );
 }

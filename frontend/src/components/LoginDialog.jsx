@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { login } from "../api";
 import { useAuth } from "../auth/AuthContext";
+import ModalPortal from "./ModalPortal";
 
 export default function LoginDialog({ open, onClose }) {
   const { login: setAccessToken } = useAuth();
@@ -23,32 +24,34 @@ export default function LoginDialog({ open, onClose }) {
   };
 
   return (
-    <div style={styles.backdrop} onClick={onClose}>
-      <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>Logowanie</h3>
-        <form onSubmit={onSubmit} style={{ display: "grid", gap: 8 }}>
-          <label>
-            Nazwa użytkownika
-            <input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </label>
-          <label>
-            Hasło
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          {error && <div style={{ color: "red" }}>{error}</div>}
-          <button style={styles.btn} type="submit">
-            Zaloguj
-          </button>
-        </form>
+    <ModalPortal>
+      <div style={styles.backdrop} onClick={onClose}>
+        <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+          <h3>Logowanie</h3>
+          <form onSubmit={onSubmit} style={{ display: "grid", gap: 8 }}>
+            <label>
+              Nazwa użytkownika
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </label>
+            <label>
+              Hasło
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+            {error && <div style={{ color: "red" }}>{error}</div>}
+            <button style={styles.btn} type="submit">
+              Zaloguj
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 }
 

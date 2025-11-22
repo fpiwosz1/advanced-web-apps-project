@@ -122,3 +122,29 @@ export async function deleteSeries(accessToken, id) {
     throw new Error(`Failed to delete series: ${res.status}`);
   }
 }
+
+export async function updateSeries(accessToken, id, payload) {
+  const res = await fetch(`${TEMP_API}/api/v1/series/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`Failed to update series: ${res.status}`);
+  return res.json();
+}
+
+export async function updateMeasurement(accessToken, id, payload) {
+  const res = await fetch(`${TEMP_API}/api/v1/measurements/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`Failed to update measurement: ${res.status}`);
+  return res.json();
+}

@@ -3,13 +3,30 @@ import { fetchSeries, fetchMeasurements, deleteMeasurement } from "../api";
 import { useAuth } from "../auth/AuthContext";
 import { formatLocalInput, localInputToIsoUtc } from "../utils/time";
 import MeasurementsChart from "./MeasurementsChart";
+import MeasurementForm from "./MeasurementForm";
 
 export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
   const { token, user } = useAuth();
   const [series, setSeries] = useState([]);
   const [selectedSeriesIds, setSelectedSeriesIds] = useState([]);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editingMeasurement, setEditingMeasurement] = useState(null);
 
-  // domyślne zakresy: [now-12h, now]
+  const [initializedSelection, setInitializedSelection] = useState(false);
+
+  useEffect(() => {
+    if (!series.length) return;
+    const validIds = new Set(series.map((s) => s.id));
+    setSelectedSeriesIds((prev) => prev.filter((id) => validIds.has(id)));
+  }, [series]);
+  
+  useEffect(() => {
+    if (series.length && !initializedSelection) {
+      setSelectedSeriesIds(series.map((x) => x.id));
+      setInitializedSelection(true);
+    }
+  }, [series, initializedSelection]);
+
   const [fromLocal, setFromLocal] = useState(() =>
     formatLocalInput(new Date(Date.now() - 12 * 60 * 60 * 1000))
   );
@@ -19,6 +36,17 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [selectedPoint, setSelectedPoint] = useState(null);
+
+  const [pageSize, setPageSize] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const openEdit = (m) => {
+    setEditingMeasurement(m);
+    setEditOpen(true);
+  };
+  const onSaved = async () => {
+    await load();
+  };
 
   useEffect(() => {
     (async () => {
@@ -47,6 +75,12 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
     try {
       setLoading(true);
       setErr("");
+      // Jeśli nic nie zaznaczone, pokazujemy pusto i nie wołamy API
+      if (selectedSeriesIds.length === 0) {
+        setItems([]);
+        setSelectedPoint(null);
+        return;
+      }
       const data = await fetchMeasurements({
         seriesIds: selectedSeriesIds,
         from: localInputToIsoUtc(fromLocal),
@@ -92,6 +126,14 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
       alert("Nie udało się usunąć pomiaru.");
     }
   };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [items, selectedSeriesIds, fromLocal, toLocal]);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  const start = (currentPage - 1) * pageSize;
+  const pagedItems = items.slice(start, start + pageSize);
 
   return (
     <section style={{ padding: 16, display: "grid", gap: 12 }}>
@@ -162,6 +204,40 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
         </div>
       </div>
 
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <span>{items.length} rekordów</span>
+        <label>
+          Na stronę:
+          <select
+            value={pageSize}
+            onChange={(e) => setPageSize(Number(e.target.value))}
+            style={{ marginLeft: 6 }}
+          >
+            {[10, 20, 50, 100].map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          style={btnOutline}
+          disabled={currentPage <= 1}
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+        >
+          Poprzednia
+        </button>
+        <span>
+          Strona {currentPage} / {totalPages}
+        </span>
+        <button
+          style={btnOutline}
+          disabled={currentPage >= totalPages}
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+        >
+          Następna
+        </button>
+      </div>
       {loading ? (
         <div>Ładowanie...</div>
       ) : err ? (
@@ -179,14 +255,14 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
             </tr>
           </thead>
           <tbody>
-            {items.length === 0 ? (
+            {pagedItems.length === 0 ? (
               <tr>
                 <td colSpan="6" style={{ textAlign: "center", color: "#666" }}>
                   Brak danych.
                 </td>
               </tr>
             ) : (
-              items.map((m) => {
+              pagedItems.map((m) => {
                 const s = seriesById.get(m.seriesId);
                 return (
                   <tr
@@ -211,17 +287,34 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
                     <td>{m.label ?? ""}</td>
                     <td>
                       {user && (
-                        <button
-                          style={btnSmallOutline}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            remove(m.id);
-                          }}
-                        >
-                          Usuń
-                        </button>
+                        <>
+                          <button
+                            style={btnSmallOutline}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEdit(m);
+                            }}
+                          >
+                            Edytuj
+                          </button>
+                          <button
+                            style={btnSmallOutline}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              remove(m.id);
+                            }}
+                          >
+                            Usuń
+                          </button>
+                        </>
                       )}
                     </td>
+                    <MeasurementForm
+                      open={editOpen}
+                      onClose={() => setEditOpen(false)}
+                      initial={editingMeasurement}
+                      onSaved={onSaved}
+                    />
                   </tr>
                 );
               })
