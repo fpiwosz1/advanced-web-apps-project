@@ -138,15 +138,16 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
           </button>
         )}
       </div>
+      <div className="print-chart">
+        <MeasurementsChart
+          items={items}
+          seriesById={seriesById}
+          selectedSeriesIds={selectedSeriesIds}
+          selected={selectedPoint}
+        />
+      </div>
 
-      <MeasurementsChart
-        items={items}
-        seriesById={seriesById}
-        selectedSeriesIds={selectedSeriesIds}
-        selected={selectedPoint}
-      />
-
-      <div style={filters}>
+      <div className="filters" style={filters}>
         <div>
           <strong>Series:</strong>
           <div
@@ -168,7 +169,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
             ))}
           </div>
         </div>
-        <div style={{ display: "flex", gap: 12 }}>
+        <div className="pagination" style={{ display: "flex", gap: 12 }}>
           <label>
             From
             <input
@@ -244,7 +245,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
       ) : err ? (
         <div style={{ color: "red" }}>{err}</div>
       ) : (
-        <table style={table}>
+        <table className="print-table" style={table}>
           <thead>
             <tr>
               <th>ID</th>

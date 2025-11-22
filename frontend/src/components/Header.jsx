@@ -8,7 +8,7 @@ export default function Header({
   const { user, logout } = useAuth();
 
   return (
-    <header style={styles.header}>
+    <header className="app-header" style={styles.header}>
       <div style={styles.brand}>Temperature Monitoring</div>
       <div style={styles.actions}>
         {user ? (
