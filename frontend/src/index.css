@@ -89,6 +89,10 @@ button:focus-visible {
     page-break-inside: avoid;
     break-inside: avoid;
   }
+  .print-table th:last-child,
+  .print-table td:last-child {
+    display: none !important;
+  }
 
   body {
     -webkit-print-color-adjust: exact;

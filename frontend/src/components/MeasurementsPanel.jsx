@@ -122,6 +122,9 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
   const start = (currentPage - 1) * pageSize;
   const pagedItems = items.slice(start, start + pageSize);
 
+  const baseCols = 5; // ID, Series, Value, Time, Label
+  const totalCols = user ? baseCols + 1 : baseCols;
+
   return (
     <section style={{ padding: 16, display: "grid", gap: 12 }}>
       <div
@@ -253,14 +256,17 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
               <th>Value</th>
               <th>Time</th>
               <th>Label</th>
-              <th>Actions</th>
+              {user && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
             {pagedItems.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ textAlign: "center", color: "#666" }}>
-                  Brak danych.
+                <td
+                  colSpan={totalCols}
+                  style={{ textAlign: "center", color: "#666" }}
+                >
+                  No measurements.
                 </td>
               </tr>
             ) : (
@@ -287,30 +293,32 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
                     </td>
                     <td>{new Date(m.timestamp).toLocaleString()}</td>
                     <td>{m.label ?? ""}</td>
-                    <td>
-                      {user && (
-                        <>
-                          <button
-                            style={btnSmallOutline}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEdit(m);
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            style={btnSmallOutline}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              remove(m.id);
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
-                    </td>
+                    {user && (
+                      <td>
+                        {user && (
+                          <>
+                            <button
+                              style={btnSmallOutline}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEdit(m);
+                              }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              style={btnSmallOutline}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                remove(m.id);
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 );
               })
