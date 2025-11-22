@@ -22,7 +22,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
   }, [series, initializedSelection]);
 
   const [fromLocal, setFromLocal] = useState(() =>
-    formatLocalInput(new Date(Date.now() - 12 * 60 * 60 * 1000))
+    formatLocalInput(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) // 7 days ago
   );
   const [toLocal, setToLocal] = useState(() => formatLocalInput(new Date()));
 
