@@ -1,0 +1,12 @@
+micronaut:
+  server:
+    cors:
+      configurations:
+        default:
+          allowed-origins:
+            - http://localhost:5173
+
+auth:
+  cookie:
+    secure: false
+    same-site: Lax

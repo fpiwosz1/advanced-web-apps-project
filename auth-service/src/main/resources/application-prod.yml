@@ -1,0 +1,13 @@
+micronaut:
+  server:
+    cors:
+      configurations:
+        default:
+          allowed-origins:
+            # TODO: Update with your frontend production URL
+            - https://frontend-example.com
+
+auth:
+  cookie:
+    secure: true
+    same-site: None

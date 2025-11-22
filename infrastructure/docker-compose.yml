@@ -25,6 +25,7 @@ services:
       dockerfile: Dockerfile
     container_name: auth-service
     environment:
+      - MICRONAUT_ENVIRONMENTS=dev
       - JWT_SECRET=36fc5468a8033f734ac2e210bb888b932f3ce4c6283857f6cb01c695a2c93882
       - DB_HOST=postgres
       - DB_PORT=5432

@@ -5,9 +5,9 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 
+import edu.pw.auth.config.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.micronaut.context.annotation.Value;
 import jakarta.inject.Singleton;
 
 @Singleton
@@ -17,12 +17,11 @@ public class JwtService {
     private final long accessTokenExpirationMs;
     private final long refreshTokenExpirationMs;
 
-    public JwtService(@Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-expiration-ms}") long accessTokenExpirationMs,
-            @Value("${jwt.refresh-token-expiration-ms}") long refreshTokenExpirationMs) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.accessTokenExpirationMs = accessTokenExpirationMs;
-        this.refreshTokenExpirationMs = refreshTokenExpirationMs;
+    public JwtService(JwtProperties jwtProperties) {
+        this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret()
+                .getBytes(StandardCharsets.UTF_8));
+        this.accessTokenExpirationMs = jwtProperties.getAccessTokenExpirationMs();
+        this.refreshTokenExpirationMs = jwtProperties.getRefreshTokenExpirationMs();
     }
 
     public String generateAccessToken(Long userId, String username) {
@@ -63,5 +62,9 @@ public class JwtService {
 
     public long getAccessTokenExpirationMs() {
         return accessTokenExpirationMs;
+    }
+
+    public long getRefreshTokenExpirationMs() {
+        return refreshTokenExpirationMs;
     }
 }
