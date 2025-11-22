@@ -63,7 +63,6 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
     try {
       setLoading(true);
       setErr("");
-      // Jeśli nic nie zaznaczone, pokazujemy pusto i nie wołamy API
       if (selectedSeriesIds.length === 0) {
         setItems([]);
         setSelectedPoint(null);
@@ -132,10 +131,10 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
           alignItems: "center",
         }}
       >
-        <h2>Pomiary</h2>
+        <h2>Measurements</h2>
         {user && (
           <button style={btn} onClick={onOpenCreate}>
-            Dodaj pomiar
+            Add measurement
           </button>
         )}
       </div>
@@ -149,7 +148,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
 
       <div style={filters}>
         <div>
-          <strong>Serie:</strong>
+          <strong>Series:</strong>
           <div
             style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 6 }}
           >
@@ -171,7 +170,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
         </div>
         <div style={{ display: "flex", gap: 12 }}>
           <label>
-            Od
+            From
             <input
               type="datetime-local"
               value={fromLocal}
@@ -179,7 +178,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
             />
           </label>
           <label>
-            Do
+            To
             <input
               type="datetime-local"
               value={toLocal}
@@ -187,29 +186,29 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
             />
           </label>
           <button style={btnOutline} onClick={load}>
-            Zastosuj
+            Apply
           </button>
           <button
             style={btnOutline}
             onClick={() => setSelectedSeriesIds(series.map((s) => s.id))}
             disabled={!series.length}
           >
-            Zaznacz wszystkie
+            Select all
           </button>
           <button
             style={btnOutline}
             onClick={() => setSelectedSeriesIds([])}
             disabled={selectedSeriesIds.length === 0}
           >
-            Wyczyść
+            Clear
           </button>
         </div>
       </div>
 
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <span>{items.length} rekordów</span>
+        <span>{items.length} records</span>
         <label>
-          Na stronę:
+          Per page:
           <select
             value={pageSize}
             onChange={(e) => setPageSize(Number(e.target.value))}
@@ -227,17 +226,17 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
           disabled={currentPage <= 1}
           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
         >
-          Poprzednia
+          Previous
         </button>
         <span>
-          Strona {currentPage} / {totalPages}
+          Page {currentPage} / {totalPages}
         </span>
         <button
           style={btnOutline}
           disabled={currentPage >= totalPages}
           onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
         >
-          Następna
+          Next
         </button>
       </div>
       {loading ? (
@@ -249,11 +248,11 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Seria</th>
-              <th>Wartość</th>
-              <th>Czas</th>
-              <th>Etykieta</th>
-              <th>Akcje</th>
+              <th>Series</th>
+              <th>Value</th>
+              <th>Time</th>
+              <th>Label</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -297,7 +296,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
                               openEdit(m);
                             }}
                           >
-                            Edytuj
+                            Edit
                           </button>
                           <button
                             style={btnSmallOutline}
@@ -306,7 +305,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
                               remove(m.id);
                             }}
                           >
-                            Usuń
+                            Delete
                           </button>
                         </>
                       )}

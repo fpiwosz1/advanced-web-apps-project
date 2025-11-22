@@ -3,7 +3,7 @@ import { fetchSeries, deleteSeries } from "../api";
 import { useAuth } from "../auth/AuthContext";
 import SeriesForm from "../components/SeriesForm";
 
-export default function Home({ reloadKey = 0 }) {
+export default function Home({ reloadKey = 0, onChanged }) {
   const { token, user } = useAuth();
   const [series, setSeries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,8 @@ export default function Home({ reloadKey = 0 }) {
       await deleteSeries(token, id);
       await load();
       onChanged?.();
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Nie udało się usunąć serii.");
     }
   };
@@ -58,9 +59,9 @@ export default function Home({ reloadKey = 0 }) {
 
   return (
     <main style={{ padding: 16, display: "grid", gap: 12 }}>
-      <h2>Serie temperatur</h2>
+      <h2>Temperature series</h2>
       {series.length === 0 ? (
-        <div>Brak serii.</div>
+        <div>No series</div>
       ) : (
         <div style={grid}>
           {series.map((s) => (
@@ -97,7 +98,7 @@ export default function Home({ reloadKey = 0 }) {
                 </div>
               )}
               <div style={{ marginTop: 8, fontSize: 13 }}>
-                Zakres: {s.minValue} — {s.maxValue} {s.unit}
+                Range: {s.minValue} — {s.maxValue} {s.unit}
               </div>
             </div>
           ))}
@@ -108,6 +109,7 @@ export default function Home({ reloadKey = 0 }) {
         onClose={() => setEditOpen(false)}
         initial={editing}
         onSaved={onSaved}
+        onCreated={async () => { await load(); onChanged?.(); }}
       />
     </main>
   );

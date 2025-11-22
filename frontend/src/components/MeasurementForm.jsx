@@ -86,7 +86,7 @@ export default function MeasurementForm({
           <h3>Dodaj pomiar</h3>
           <form onSubmit={submit} style={{ display: "grid", gap: 8 }}>
             <label>
-              Seria
+              Series
               <select value={form.seriesId} onChange={set("seriesId")} required>
                 {series.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -96,7 +96,7 @@ export default function MeasurementForm({
               </select>
             </label>
             <label>
-              Wartość
+              Value
               <input
                 type="number"
                 step="0.01"
@@ -106,7 +106,7 @@ export default function MeasurementForm({
               />
             </label>
             <label>
-              Czas
+              Time
               <input
                 type="datetime-local"
                 value={form.timestampLocal}
@@ -115,7 +115,7 @@ export default function MeasurementForm({
               />
             </label>
             <label>
-              Etykieta (opcjonalnie)
+              Label (optional)
               <input value={form.label} onChange={set("label")} />
             </label>
             {err && <div style={{ color: "red" }}>{err}</div>}

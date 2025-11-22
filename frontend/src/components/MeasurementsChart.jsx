@@ -10,10 +10,8 @@ import {
   Dot,
 } from "recharts";
 
-// Buduje wspólne punkty czasu z polami s_<seriesId> na wartości.
-// items: [{ id, seriesId, value, timestamp }], selectedSeriesIds: [id...]
 function buildChartData(items, selectedSeriesIds) {
-  const map = new Map(); // t(ms) -> row
+  const map = new Map(); 
   for (const m of items) {
     if (selectedSeriesIds.length && !selectedSeriesIds.includes(m.seriesId))
       continue;
@@ -64,22 +62,23 @@ export default function MeasurementsChart({
           />
           <YAxis />
           <Tooltip
-            labelFormatter={tooltipLabel}
-            formatter={(value, name) => {
-              // name = 's_<id>'
-              const id = Number(String(name).slice(2));
-              const unit = seriesById.get(id)?.unit || "";
-              const label = seriesById.get(id)?.name || `Seria ${id}`;
-              return [`${value} ${unit}`, label];
+            labelFormatter={(t) => new Date(t).toLocaleString()}
+            formatter={(value, name, props) => {
+              const dk = props?.dataKey;
+              const id =
+                dk && String(dk).startsWith("s_")
+                  ? Number(String(dk).slice(2))
+                  : null;
+              const unit = id != null ? seriesById.get(id)?.unit ?? "" : "";
+              return [`${value} ${unit}`, name];
             }}
           />
           <Legend />
           {selectedSeriesIds.map((id) => {
             const s = seriesById.get(id);
             const color = s?.color || "#8884d8";
-            const name = s?.name || `Seria ${id}`;
+            const name = s?.name || `Series ${id}`;
             const unit = s?.unit || "";
-            // Podświetlenie punktu po kliknięciu w wiersz tabeli
             const dot = (props) => {
               const isActive =
                 selected &&

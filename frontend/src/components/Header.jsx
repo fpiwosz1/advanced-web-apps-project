@@ -13,20 +13,20 @@ export default function Header({
       <div style={styles.actions}>
         {user ? (
           <>
-            <span style={styles.user}>Zalogowany: {user.username}</span>
+            <span style={styles.user}>Logged: {user.username}</span>
             <button style={styles.btn} onClick={onOpenCreateSeries}>
-              Dodaj serię
+              Add series
             </button>
             <button style={styles.btn} onClick={onOpenCreateMeasurement}>
-              Dodaj pomiar
+              Add measurement
             </button>
             <button style={styles.btnOutline} onClick={logout}>
-              Wyloguj
+              Logout
             </button>
           </>
         ) : (
           <button style={styles.btn} onClick={onOpenLogin}>
-            Zaloguj
+            Login
           </button>
         )}
       </div>

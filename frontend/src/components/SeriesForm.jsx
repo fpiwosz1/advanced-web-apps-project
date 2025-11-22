@@ -90,14 +90,14 @@ export default function SeriesForm({
     <ModalPortal>
       <div style={styles.backdrop} onClick={onClose}>
         <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-          <h3>Dodaj serię</h3>
+          <h3>Add series</h3>
           <form onSubmit={submit} style={{ display: "grid", gap: 8 }}>
             <label>
-              Nazwa
+              Name
               <input value={form.name} onChange={set("name")} required />
             </label>
             <label>
-              Opis
+              Description
               <input value={form.description} onChange={set("description")} />
             </label>
             <div
@@ -127,15 +127,11 @@ export default function SeriesForm({
               </label>
             </div>
             <label>
-              Kolor
+              Color
               <input value={form.color} onChange={set("color")} />
             </label>
             <label>
-              Ikona
-              <input value={form.icon} onChange={set("icon")} />
-            </label>
-            <label>
-              Jednostka
+              Unit
               <input value={form.unit} onChange={set("unit")} />
             </label>
             {err && <div style={{ color: "red" }}>{err}</div>}

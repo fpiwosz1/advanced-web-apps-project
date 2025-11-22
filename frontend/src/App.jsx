@@ -39,7 +39,7 @@ export default function App() {
       <SeriesForm
         open={seriesOpen}
         onClose={() => setSeriesOpen(false)}
-        onCreated={refreshSeries}
+        onCreated={handleSeriesChanged}
       />
       <MeasurementForm
         open={measurementOpen}
