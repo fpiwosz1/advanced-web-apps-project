@@ -9,7 +9,6 @@ micronaut:
         default:
           allowed-origins:
             - http://localhost:5173
-            - filippiwosz.eu
           allowed-methods:
             - GET
             - POST

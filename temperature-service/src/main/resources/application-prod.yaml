@@ -1,0 +1,12 @@
+micronaut:
+  server:
+    cors:
+      configurations:
+        default:
+          allowed-origins:
+            - filippiwosz.eu
+
+auth:
+  cookie:
+    secure: true
+    same-site: None
