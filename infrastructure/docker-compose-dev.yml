@@ -1,0 +1,70 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=temperature_monitoring
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${DB_NAME:-temperature_monitoring}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    build:
+      context: ../auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    container_name: auth-service
+    restart: unless-stopped
+    environment:
+      - MICRONAUT_ENVIRONMENTS=dev
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=temperature_monitoring
+      - DB_USER=authuser
+      - DB_PASSWORD=auth_password
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - appnet
+
+  temperature-service:
+    build:
+      context: ../temperature-service
+      dockerfile: Dockerfile
+    container_name: temperature-service
+    restart: unless-stopped
+    environment:
+      - MICRONAUT_ENVIRONMENTS=dev
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=temperature_monitoring
+      - DB_USER=tempuser
+      - DB_PASSWORD=temp_password
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - appnet
+
+volumes:
+  postgres_data:
+
+networks:
+  appnet:
+    driver: bridge

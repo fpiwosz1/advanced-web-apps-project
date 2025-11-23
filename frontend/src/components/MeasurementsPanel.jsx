@@ -48,7 +48,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
         const s = await fetchSeries();
         setSeries(s);
       } catch {
-        setErr("Unable to fetch series");
+        setErr("Unable to fetch measurements.");
       }
     })();
   }, [reloadKey]);
@@ -134,12 +134,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
           alignItems: "center",
         }}
       >
-        <h2>Measurements</h2>
-        {user && (
-          <button style={btn} onClick={onOpenCreate}>
-            Add measurement
-          </button>
-        )}
+        <h2>Chart</h2>
       </div>
       <div className="print-chart">
         <MeasurementsChart
@@ -152,7 +147,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
 
       <div className="filters" style={filters}>
         <div>
-          <strong>Series:</strong>
+          <strong>Filter:</strong>
           <div
             style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 6 }}
           >

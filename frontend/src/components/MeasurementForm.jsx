@@ -75,7 +75,7 @@ export default function MeasurementForm({
       }
       onClose();
     } catch {
-      setErr("Unable to save measurement.");
+      setErr("Nie udało się zapisać pomiaru.");
     }
   };
 
