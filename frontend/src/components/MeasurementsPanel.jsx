@@ -21,8 +21,8 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
     }
   }, [series, initializedSelection]);
 
-  const [fromLocal, setFromLocal] = useState(() =>
-    formatLocalInput(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) // 7 days ago
+  const [fromLocal, setFromLocal] = useState(
+    () => formatLocalInput(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) // 7 days ago
   );
   const [toLocal, setToLocal] = useState(() => formatLocalInput(new Date()));
 
@@ -48,7 +48,7 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
         const s = await fetchSeries();
         setSeries(s);
       } catch {
-        setErr("Unable to fetch measurements.");
+        setErr("Unable to fetch series.");
       }
     })();
   }, [reloadKey]);
@@ -290,28 +290,26 @@ export default function MeasurementsPanel({ onOpenCreate, reloadKey }) {
                     <td>{m.label ?? ""}</td>
                     {user && (
                       <td>
-                        {user && (
-                          <>
-                            <button
-                              style={btnSmallOutline}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openEdit(m);
-                              }}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              style={btnSmallOutline}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                remove(m.id);
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </>
-                        )}
+                        <>
+                          <button
+                            style={btnSmallOutline}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEdit(m);
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            style={btnSmallOutline}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              remove(m.id);
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </>
                       </td>
                     )}
                   </tr>

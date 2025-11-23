@@ -15,7 +15,6 @@ export default function App() {
   const [refreshSeriesKey, setRefreshSeriesKey] = useState(0);
   const [refreshMeasurementsKey, setRefreshMeasurementsKey] = useState(0);
 
-  const refreshSeries = () => setRefreshSeriesKey((k) => k + 1);
   const refreshMeasurements = () => setRefreshMeasurementsKey((k) => k + 1);
 
   const handleSeriesChanged = () => {

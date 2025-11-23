@@ -11,7 +11,7 @@ import {
 } from "recharts";
 
 function buildChartData(items, selectedSeriesIds) {
-  const map = new Map(); 
+  const map = new Map();
   for (const m of items) {
     if (selectedSeriesIds.length && !selectedSeriesIds.includes(m.seriesId))
       continue;
@@ -35,7 +35,6 @@ export default function MeasurementsChart({
   const data = buildChartData(items, selectedSeriesIds);
 
   const formatTick = (t) => new Date(t).toLocaleString();
-  const tooltipLabel = (t) => new Date(t).toLocaleString();
 
   return (
     <div

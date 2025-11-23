@@ -35,52 +35,47 @@ export default function ChangePasswordDialog({ open, onClose }) {
 
   return (
     <ModalPortal>
-      {" "}
       <div className="backdrop" style={backdrop} onClick={onClose}>
-        {" "}
         <div
           className="modal"
           style={modal}
           onClick={(e) => e.stopPropagation()}
         >
-          {" "}
-          <h3>Change password</h3>{" "}
+          <h3>Change password</h3>
           <form onSubmit={onSubmit} style={{ display: "grid", gap: 8 }}>
-            {" "}
             <label>
-              {" "}
-              Current password{" "}
+              Current password
               <input
                 type="password"
                 value={oldPassword}
                 onChange={(e) => setOld(e.target.value)}
-              />{" "}
-            </label>{" "}
+                required
+              />
+            </label>
             <label>
-              {" "}
-              New password{" "}
+              New password
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNew(e.target.value)}
-              />{" "}
-            </label>{" "}
-            {err && <div style={{ color: "red" }}>{err}</div>}{" "}
-            {ok && <div style={{ color: "green" }}>{ok}</div>}{" "}
+                required
+              />
+            </label>
+            {err && <div style={{ color: "red" }}>{err}</div>}
+            {ok && <div style={{ color: "green" }}>{ok}</div>}
             <div
               style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}
             >
-              {" "}
               <button type="button" onClick={onClose} style={btnOutline}>
                 Cancel
-              </button>{" "}
+              </button>
               <button type="submit" style={btn}>
                 Save
-              </button>{" "}
-            </div>{" "}
-          </form>{" "}
-        </div>{" "}
-      </div>{" "}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </ModalPortal>
   );
 }

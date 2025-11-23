@@ -5,8 +5,8 @@ import ModalPortal from "./ModalPortal";
 
 export default function LoginDialog({ open, onClose }) {
   const { login: setAccessToken } = useAuth();
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("admin123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   if (!open) return null;
@@ -19,7 +19,7 @@ export default function LoginDialog({ open, onClose }) {
       setAccessToken(res.accessToken);
       onClose();
     } catch (err) {
-      setError("Błędny login lub hasło.");
+      setError("Wrong username or password.");
     }
   };
 
@@ -30,23 +30,25 @@ export default function LoginDialog({ open, onClose }) {
           <h3>Logowanie</h3>
           <form onSubmit={onSubmit} style={{ display: "grid", gap: 8 }}>
             <label>
-              Nazwa użytkownika
+              Username
               <input
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
               />
             </label>
             <label>
-              Hasło
+              Password
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
             </label>
             {error && <div style={{ color: "red" }}>{error}</div>}
             <button style={styles.btn} type="submit">
-              Zaloguj
+              Login
             </button>
           </form>
         </div>

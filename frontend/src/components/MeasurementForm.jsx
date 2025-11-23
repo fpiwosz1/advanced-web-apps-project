@@ -51,11 +51,11 @@ export default function MeasurementForm({
     e.preventDefault();
     setErr("");
     if (!token) {
-      setErr("Wymagane zalogowanie.");
+      setErr("Login required.");
       return;
     }
     if (!form.seriesId || form.value === "") {
-      setErr("Wypełnij wymagane pola.");
+      setErr("Fill the");
       return;
     }
 
@@ -75,7 +75,7 @@ export default function MeasurementForm({
       }
       onClose();
     } catch {
-      setErr("Nie udało się zapisać pomiaru.");
+      setErr("Unable to save measurement.");
     }
   };
 
@@ -83,7 +83,7 @@ export default function MeasurementForm({
     <ModalPortal>
       <div style={styles.backdrop} onClick={onClose}>
         <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-          <h3>Dodaj pomiar</h3>
+          <h3>{initial?.id ? "Edit measurement" : "Add measurement"}</h3>
           <form onSubmit={submit} style={{ display: "grid", gap: 8 }}>
             <label>
               Series

@@ -10,6 +10,8 @@ export default function SeriesForm({
   initial = null,
   onSaved,
 }) {
+  if (!open) return null;
+
   const { token } = useAuth();
   const [form, setForm] = useState({
     name: "",
@@ -17,7 +19,6 @@ export default function SeriesForm({
     minValue: -40.0,
     maxValue: 50.0,
     color: "#1E90FF",
-    icon: "thermometer",
     unit: "°C",
   });
   const [err, setErr] = useState("");
@@ -30,7 +31,6 @@ export default function SeriesForm({
         minValue: initial.minValue ?? -40.0,
         maxValue: initial.maxValue ?? 50.0,
         color: initial.color ?? "#1E90FF",
-        icon: initial.icon ?? "thermometer",
         unit: initial.unit ?? "°C",
       });
     } else if (open && !initial) {
@@ -40,13 +40,10 @@ export default function SeriesForm({
         minValue: -40.0,
         maxValue: 50.0,
         color: "#1E90FF",
-        icon: "thermometer",
         unit: "°C",
       });
     }
   }, [open, initial]);
-
-  if (!open) return null;
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
@@ -54,7 +51,7 @@ export default function SeriesForm({
     e.preventDefault();
     setErr("");
     if (!token) {
-      setErr("Wymagane zalogowanie.");
+      setErr("Login required.");
       return;
     }
     if (Number(form.minValue) >= Number(form.maxValue)) {
@@ -62,7 +59,7 @@ export default function SeriesForm({
       return;
     }
     if (!/^#[0-9A-Fa-f]{6}$/.test(form.color)) {
-      setErr("Kolor musi być w formacie #RRGGBB.");
+      setErr("Color must be in format #RRGGBB.");
       return;
     }
     try {
@@ -83,8 +80,6 @@ export default function SeriesForm({
       setErr("Unable to save series.");
     }
   };
-
-  if (!open) return null;
 
   return (
     <ModalPortal>
@@ -128,11 +123,21 @@ export default function SeriesForm({
             </div>
             <label>
               Color
-              <input value={form.color} onChange={set("color")} />
+              <input
+                value={form.color}
+                onChange={set("color")}
+                pattern="^#[0-9A-Fa-f]{6}$"
+                required
+              />
             </label>
             <label>
               Unit
-              <input value={form.unit} onChange={set("unit")} />
+              <input
+                value={form.unit}
+                onChange={set("unit")}
+                maxLength={10}
+                required
+              />
             </label>
             {err && <div style={{ color: "red" }}>{err}</div>}
             <div
@@ -169,5 +174,21 @@ const styles = {
     width: 420,
     boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
     zIndex: 10001,
+  },
+  btn: {
+    padding: "8px 12px",
+    background: "#1E90FF",
+    color: "#fff",
+    border: "none",
+    borderRadius: 4,
+    cursor: "pointer",
+  },
+  btnOutline: {
+    padding: "8px 12px",
+    background: "#fff",
+    color: "#1E90FF",
+    border: "1px solid #1E90FF",
+    borderRadius: 4,
+    cursor: "pointer",
   },
 };
