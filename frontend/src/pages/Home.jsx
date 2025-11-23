@@ -33,7 +33,9 @@ export default function Home({ reloadKey = 0, onChanged }) {
       alert("Login required.");
       return;
     }
-    if (!confirm("Delete this series? All associated measurements will be lost."))
+    if (
+      !confirm("Delete this series? All associated measurements will be lost.")
+    )
       return;
     try {
       await deleteSeries(token, id);
@@ -45,7 +47,7 @@ export default function Home({ reloadKey = 0, onChanged }) {
     }
   };
 
-  if (loading) return <div style={{ padding: 16 }}>Ładowanie...</div>;
+  if (loading) return <div style={{ padding: 16 }}>Loading...</div>;
   if (err) return <div style={{ padding: 16, color: "red" }}>{err}</div>;
 
   const openEdit = (s) => {
@@ -81,13 +83,13 @@ export default function Home({ reloadKey = 0, onChanged }) {
                 {user && (
                   <div style={{ display: "flex", gap: 8 }}>
                     <button style={btnSmallOutline} onClick={() => openEdit(s)}>
-                      Edytuj
+                      Edit
                     </button>
                     <button
                       style={btnSmallOutline}
                       onClick={() => removeSeries(s.id)}
                     >
-                      Usuń
+                      Delete
                     </button>
                   </div>
                 )}
@@ -109,7 +111,10 @@ export default function Home({ reloadKey = 0, onChanged }) {
         onClose={() => setEditOpen(false)}
         initial={editing}
         onSaved={onSaved}
-        onCreated={async () => { await load(); onChanged?.(); }}
+        onCreated={async () => {
+          await load();
+          onChanged?.();
+        }}
       />
     </main>
   );

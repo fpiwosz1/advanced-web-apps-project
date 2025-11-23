@@ -148,3 +148,18 @@ export async function updateMeasurement(accessToken, id, payload) {
   if (!res.ok) throw new Error(`Failed to update measurement: ${res.status}`);
   return res.json();
 }
+
+export async function changePassword(accessToken, oldPassword, newPassword) {
+  const res = await fetch(`${AUTH_API}/api/v1/auth/change-password`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ oldPassword, newPassword }),
+  });
+  if (!res.ok && res.status !== 204) {
+    throw new Error(`Failed to change password: ${res.status}`);
+  }
+}

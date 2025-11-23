@@ -11,6 +11,5 @@ public record CreateSeriesRequest(
         BigDecimal minValue,
         BigDecimal maxValue,
         String color,
-        String icon,
         String unit
 ) {}

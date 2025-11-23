@@ -1,10 +1,13 @@
 package edu.pw.auth.application;
 
+import java.util.Optional;
+
 import edu.pw.auth.adapters.in.web.dto.AuthResponse;
 import edu.pw.auth.adapters.out.persistence.UserRepository;
 import edu.pw.auth.adapters.out.security.JwtService;
 import edu.pw.auth.adapters.out.security.PasswordService;
 import edu.pw.auth.domain.model.UserEntity;
+import io.jsonwebtoken.Claims;
 import jakarta.inject.Singleton;
 
 @Singleton
@@ -48,7 +51,7 @@ public class AuthService implements AuthUseCase {
 
     @Override
     public AuthResponse refresh(String refreshToken) {
-        var claimsOpt = jwtService.parseClaims(refreshToken);
+        Optional<Claims> claimsOpt = jwtService.parseClaims(refreshToken);
         if (claimsOpt.isEmpty()) {
             throw new IllegalArgumentException("Invalid refresh token");
         }

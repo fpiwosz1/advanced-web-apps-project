@@ -1,2 +1,3 @@
-#!/bin/zsh
-docker compose up -d --build
+#!/bin/bash
+docker compose --env-file .env.prod up -d --build
+

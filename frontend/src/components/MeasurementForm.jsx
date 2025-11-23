@@ -51,11 +51,11 @@ export default function MeasurementForm({
     e.preventDefault();
     setErr("");
     if (!token) {
-      setErr("Wymagane zalogowanie.");
+      setErr("Login required.");
       return;
     }
     if (!form.seriesId || form.value === "") {
-      setErr("Wypełnij wymagane pola.");
+      setErr("Fill the");
       return;
     }
 
@@ -83,7 +83,7 @@ export default function MeasurementForm({
     <ModalPortal>
       <div style={styles.backdrop} onClick={onClose}>
         <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-          <h3>Dodaj pomiar</h3>
+          <h3>{initial?.id ? "Edit measurement" : "Add measurement"}</h3>
           <form onSubmit={submit} style={{ display: "grid", gap: 8 }}>
             <label>
               Series
@@ -123,10 +123,10 @@ export default function MeasurementForm({
               style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}
             >
               <button type="button" onClick={onClose} style={styles.btnOutline}>
-                Anuluj
+                Cancel
               </button>
               <button type="submit" style={styles.btn}>
-                Zapisz
+                Save
               </button>
             </div>
           </form>

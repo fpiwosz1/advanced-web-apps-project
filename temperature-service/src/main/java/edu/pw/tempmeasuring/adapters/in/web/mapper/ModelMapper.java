@@ -13,7 +13,7 @@ public class ModelMapper {
         return new SeriesDto(
                 e.getId(), e.getName(), e.getDescription(),
                 e.getMinValue(), e.getMaxValue(),
-                e.getColor(), e.getIcon(), e.getUnit());
+                e.getColor(), e.getUnit());
     }
 
     public MeasurementDto toMeasurementDto(MeasurementEntity e) {

@@ -12,7 +12,6 @@ CREATE TABLE series (
     min_value DECIMAL(10, 2) NOT NULL,
     max_value DECIMAL(10, 2) NOT NULL,
     color VARCHAR(7) NOT NULL,
-    icon VARCHAR(50),
     unit VARCHAR(10) DEFAULT '°C',
 
     CONSTRAINT check_min_max CHECK (min_value < max_value),

@@ -1,6 +1,9 @@
 micronaut:
   application:
     name: auth-service
+  openapi:
+    target:
+      file: openapi-auth.yml
   server:
     port: ${MICRONAUT_SERVER_PORT:8081}
     cors:
@@ -16,6 +19,8 @@ micronaut:
           allowed-headers:
             - Authorization
             - Content-Type
+            - authorization
+            - content-type
           exposed-headers:
             - Location
           allow-credentials: true
