@@ -139,10 +139,10 @@ export default function SeriesForm({
               style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}
             >
               <button type="button" onClick={onClose} style={styles.btnOutline}>
-                Anuluj
+                Cancel
               </button>
               <button type="submit" style={styles.btn}>
-                Zapisz
+                Save
               </button>
             </div>
           </form>
