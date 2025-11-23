@@ -1,0 +1,360 @@
+openapi: 3.0.1
+info:
+  title: temperature-service
+  version: 1.0.0
+paths:
+  /api/v1/measurements:
+    get:
+      tags:
+      - Measurements API
+      summary: List measurements with optional filters
+      operationId: list
+      parameters:
+      - name: seriesIds
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+          default:
+          - ""
+      - name: from
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: string
+          format: date-time
+      - name: to
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: string
+          format: date-time
+      responses:
+        "200":
+          description: list 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MeasurementDto"
+    post:
+      tags:
+      - Measurements API
+      summary: Create measurement
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMeasurementRequest"
+        required: true
+      responses:
+        "200":
+          description: create 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeasurementDto"
+  /api/v1/measurements/{id}:
+    get:
+      tags:
+      - Measurements API
+      summary: Get measurement by id
+      operationId: get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: get 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeasurementDto"
+    put:
+      tags:
+      - Measurements API
+      summary: Update measurement
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMeasurementRequest"
+        required: true
+      responses:
+        "200":
+          description: update 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeasurementDto"
+    delete:
+      tags:
+      - Measurements API
+      summary: Delete measurement
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: delete 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/v1/series:
+    get:
+      tags:
+      - Series API
+      summary: List series
+      operationId: list_1
+      responses:
+        "200":
+          description: list_1 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SeriesDto"
+    post:
+      tags:
+      - Series API
+      summary: Create series
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSeriesRequest"
+        required: true
+      responses:
+        "200":
+          description: create_1 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeriesDto"
+  /api/v1/series/{id}:
+    get:
+      tags:
+      - Series API
+      summary: Get series by id
+      operationId: get_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: get_1 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeriesDto"
+    put:
+      tags:
+      - Series API
+      summary: Update series
+      operationId: update_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSeriesRequest"
+        required: true
+      responses:
+        "200":
+          description: update_1 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeriesDto"
+    delete:
+      tags:
+      - Series API
+      summary: Delete series
+      operationId: delete_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: delete_1 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    CreateMeasurementRequest:
+      required:
+      - label
+      - seriesId
+      - timestamp
+      - value
+      type: object
+      properties:
+        seriesId:
+          type: integer
+          format: int64
+        value:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+        label:
+          type: string
+    CreateSeriesRequest:
+      required:
+      - color
+      - description
+      - icon
+      - maxValue
+      - minValue
+      - name
+      - unit
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        minValue:
+          type: number
+        maxValue:
+          type: number
+        color:
+          type: string
+        icon:
+          type: string
+        unit:
+          type: string
+    MeasurementDto:
+      required:
+      - id
+      - label
+      - seriesId
+      - timestamp
+      - value
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        seriesId:
+          type: integer
+          format: int64
+        value:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+        label:
+          type: string
+    SeriesDto:
+      required:
+      - color
+      - description
+      - icon
+      - id
+      - maxValue
+      - minValue
+      - name
+      - unit
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        minValue:
+          type: number
+        maxValue:
+          type: number
+        color:
+          type: string
+        icon:
+          type: string
+        unit:
+          type: string
+    UpdateMeasurementRequest:
+      required:
+      - label
+      - timestamp
+      - value
+      type: object
+      properties:
+        value:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+        label:
+          type: string
+    UpdateSeriesRequest:
+      required:
+      - color
+      - description
+      - icon
+      - maxValue
+      - minValue
+      - name
+      - unit
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        minValue:
+          type: number
+        maxValue:
+          type: number
+        color:
+          type: string
+        icon:
+          type: string
+        unit:
+          type: string

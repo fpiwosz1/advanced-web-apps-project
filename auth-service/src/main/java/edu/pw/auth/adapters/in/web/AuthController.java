@@ -1,5 +1,9 @@
 package edu.pw.auth.adapters.in.web;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
+import org.slf4j.Logger;
+
 import edu.pw.auth.adapters.in.web.api.AuthApi;
 import edu.pw.auth.adapters.in.web.dto.AuthResponse;
 import edu.pw.auth.adapters.in.web.dto.ChangePasswordRequest;
@@ -15,9 +19,6 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.cookie.Cookie;
-import org.slf4j.Logger;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 @Controller("/api/v1/auth")
 public class AuthController implements AuthApi {

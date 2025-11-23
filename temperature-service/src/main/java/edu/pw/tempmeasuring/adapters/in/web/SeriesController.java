@@ -1,6 +1,10 @@
 package edu.pw.tempmeasuring.adapters.in.web;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.util.List;
+
+import org.slf4j.Logger;
 
 import edu.pw.tempmeasuring.adapters.in.web.api.SeriesApi;
 import edu.pw.tempmeasuring.adapters.in.web.dto.CreateSeriesRequest;
@@ -12,9 +16,6 @@ import edu.pw.tempmeasuring.application.SeriesUseCase;
 import edu.pw.tempmeasuring.domain.model.SeriesEntity;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
-import org.slf4j.Logger;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 @Controller("/api/v1/series")
 public class SeriesController implements SeriesApi {

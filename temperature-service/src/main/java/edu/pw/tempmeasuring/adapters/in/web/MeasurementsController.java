@@ -1,7 +1,11 @@
 package edu.pw.tempmeasuring.adapters.in.web;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.time.OffsetDateTime;
 import java.util.List;
+
+import org.slf4j.Logger;
 
 import edu.pw.tempmeasuring.adapters.in.web.api.MeasurementsApi;
 import edu.pw.tempmeasuring.adapters.in.web.dto.CreateMeasurementRequest;
@@ -15,9 +19,6 @@ import edu.pw.tempmeasuring.domain.model.MeasurementEntity;
 import edu.pw.tempmeasuring.domain.model.SeriesEntity;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
-import org.slf4j.Logger;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 @Controller("/api/v1/measurements")
 public class MeasurementsController implements MeasurementsApi {

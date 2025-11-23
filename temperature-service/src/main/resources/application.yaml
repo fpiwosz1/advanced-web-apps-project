@@ -1,6 +1,9 @@
 micronaut:
   application:
     name: temperature-service
+  openapi:
+    target:
+      file: openapi-temperature.yml
   server:
     port: ${MICRONAUT_SERVER_PORT:8082}
     cors:
