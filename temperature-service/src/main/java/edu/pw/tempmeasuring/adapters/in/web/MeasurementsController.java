@@ -66,8 +66,8 @@ public class MeasurementsController implements MeasurementsApi {
         try {
             SeriesEntity series = seriesUseCase.get(req.seriesId())
                     .orElseThrow(() -> new IllegalArgumentException("Series not found"));
-            var entity = new MeasurementEntity(series, req.value(), req.timestamp(), req.label());
-            var saved = measurementUseCase.create(entity);
+            MeasurementEntity entity = new MeasurementEntity(series, req.value(), req.timestamp(), req.label());
+            MeasurementEntity saved = measurementUseCase.create(entity);
             return HttpResponse.created(mapper.toMeasurementDto(saved));
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest();
@@ -80,10 +80,10 @@ public class MeasurementsController implements MeasurementsApi {
             return HttpResponse.unauthorized();
         log.info("Updating measurement with id: {}", id);
         try {
-            var current = measurementUseCase.get(id)
+            MeasurementEntity current = measurementUseCase.get(id)
                     .orElseThrow(() -> new IllegalArgumentException("Measurement not found"));
-            var updated = new MeasurementEntity(current.getSeries(), req.value(), req.timestamp(), req.label());
-            var saved = measurementUseCase.update(id, updated);
+            MeasurementEntity updated = new MeasurementEntity(current.getSeries(), req.value(), req.timestamp(), req.label());
+            MeasurementEntity saved = measurementUseCase.update(id, updated);
             return HttpResponse.ok(mapper.toMeasurementDto(saved));
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest();

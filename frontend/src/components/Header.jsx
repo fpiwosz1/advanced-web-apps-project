@@ -4,6 +4,7 @@ export default function Header({
   onOpenLogin,
   onOpenCreateSeries,
   onOpenCreateMeasurement,
+  onOpenChangePassword,
 }) {
   const { user, logout } = useAuth();
 
@@ -19,6 +20,13 @@ export default function Header({
             </button>
             <button style={styles.btn} onClick={onOpenCreateMeasurement}>
               Add measurement
+            </button>
+            <button
+              className="btn"
+              style={styles.btn}
+              onClick={onOpenChangePassword}
+            >
+              Change password
             </button>
             <button style={styles.btnOutline} onClick={logout}>
               Logout

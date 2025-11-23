@@ -2,6 +2,8 @@ package edu.pw.auth.adapters.in.web;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 
 import edu.pw.auth.adapters.in.web.api.AuthApi;
@@ -15,6 +17,7 @@ import edu.pw.auth.adapters.out.security.JwtService;
 import edu.pw.auth.application.AuthUseCase;
 import edu.pw.auth.config.AuthCookieProperties;
 import edu.pw.auth.domain.model.UserEntity;
+import io.jsonwebtoken.Claims;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -91,7 +94,7 @@ public class AuthController implements AuthApi {
         }
         log.info("Changing password");
         String token = authorization.substring(7);
-        var claimsOpt = jwtService.parseClaims(token);
+        Optional<Claims> claimsOpt = jwtService.parseClaims(token);
         if (claimsOpt.isEmpty()) {
             return HttpResponse.unauthorized();
         }

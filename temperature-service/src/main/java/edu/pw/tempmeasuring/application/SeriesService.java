@@ -48,7 +48,6 @@ public class SeriesService implements SeriesUseCase {
         current.setMinValue(update.getMinValue());
         current.setMaxValue(update.getMaxValue());
         current.setColor(update.getColor());
-        current.setIcon(update.getIcon());
         current.setUnit(update.getUnit());
         return repo.update(current);
     }

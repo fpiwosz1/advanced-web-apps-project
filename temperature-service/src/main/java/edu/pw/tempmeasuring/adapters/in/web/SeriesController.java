@@ -56,9 +56,9 @@ public class SeriesController implements SeriesApi {
             return HttpResponse.unauthorized();
         log.info("Creating new series: {}", req.name());
         try {
-            var entity = new SeriesEntity(req.name(), req.description(), req.minValue(), req.maxValue(),
-                    req.color(), req.icon(), req.unit());
-            var saved = seriesUseCase.create(entity);
+            SeriesEntity entity = new SeriesEntity(req.name(), req.description(), req.minValue(), req.maxValue(),
+                    req.color(), req.unit());
+            SeriesEntity saved = seriesUseCase.create(entity);
             return HttpResponse.created(mapper.toSeriesDto(saved));
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest();
@@ -71,9 +71,9 @@ public class SeriesController implements SeriesApi {
             return HttpResponse.unauthorized();
         log.info("Updating series with id: {}", id);
         try {
-            var update = new SeriesEntity(req.name(), req.description(), req.minValue(), req.maxValue(),
-                    req.color(), req.icon(), req.unit());
-            var saved = seriesUseCase.update(id, update);
+            SeriesEntity update = new SeriesEntity(req.name(), req.description(), req.minValue(), req.maxValue(),
+                    req.color(), req.unit());
+            SeriesEntity saved = seriesUseCase.update(id, update);
             return HttpResponse.ok(mapper.toSeriesDto(saved));
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest();

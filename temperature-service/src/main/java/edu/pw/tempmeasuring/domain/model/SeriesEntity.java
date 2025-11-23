@@ -27,22 +27,18 @@ public class SeriesEntity {
     @Column(nullable = false, length = 7)
     private String color;
 
-    @Column(length = 50)
-    private String icon;
-
     @Column(length = 10)
     private String unit = "°C";
 
     protected SeriesEntity() {}
 
     public SeriesEntity(String name, String description, BigDecimal minValue, BigDecimal maxValue,
-            String color, String icon, String unit) {
+            String color, String unit) {
         this.name = name;
         this.description = description;
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.color = color;
-        this.icon = icon;
         this.unit = unit;
     }
 
@@ -70,10 +66,6 @@ public class SeriesEntity {
         return color;
     }
 
-    public String getIcon() {
-        return icon;
-    }
-
     public String getUnit() {
         return unit;
     }
@@ -96,10 +88,6 @@ public class SeriesEntity {
 
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
     }
 
     public void setUnit(String unit) {

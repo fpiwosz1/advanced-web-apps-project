@@ -19,6 +19,8 @@ micronaut:
           allowed-headers:
             - Authorization
             - Content-Type
+            - authorization
+            - content-type
           exposed-headers:
             - Location
           allow-credentials: true

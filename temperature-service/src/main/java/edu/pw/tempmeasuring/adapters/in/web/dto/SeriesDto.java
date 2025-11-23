@@ -12,6 +12,5 @@ public record SeriesDto(
         BigDecimal minValue,
         BigDecimal maxValue,
         String color,
-        String icon,
         String unit
 ) {}
