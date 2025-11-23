@@ -2,19 +2,18 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: postgres
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=temperature_monitoring
-    ports:
-      - "5432:5432"
     volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init-databases.sql
       - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
-      - temp-network
+      - appnet
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tempuser -d temperature_monitoring"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${DB_NAME:-temperature_monitoring}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -24,47 +23,78 @@ services:
       context: ../auth-service
       dockerfile: Dockerfile
     container_name: auth-service
+    restart: unless-stopped
     environment:
-      - MICRONAUT_ENVIRONMENTS=dev
-      - JWT_SECRET=36fc5468a8033f734ac2e210bb888b932f3ce4c6283857f6cb01c695a2c93882
+      - MICRONAUT_ENVIRONMENTS=prod
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_NAME=temperature_monitoring
       - DB_USER=authuser
       - DB_PASSWORD=auth_password
-    ports:
-      - "8081:8081"
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - temp-network
+      - appnet
+
   temperature-service:
     build:
       context: ../temperature-service
       dockerfile: Dockerfile
     container_name: temperature-service
+    restart: unless-stopped
     environment:
-      - JWT_SECRET=36fc5468a8033f734ac2e210bb888b932f3ce4c6283857f6cb01c695a2c93882
+      - MICRONAUT_ENVIRONMENTS=prod
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_NAME=temperature_monitoring
       - DB_USER=tempuser
       - DB_PASSWORD=temp_password
-      - MICRONAUT_SERVER_PORT=8082
-    ports:
-      - "8082:8082"
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - temp-network
+      - appnet
+
+  frontend-build:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ../frontend:/app
+      - frontend_dist:/out
+    command: sh -c "npm ci && npm run build && rm -rf /out/* && cp -r dist/* /out/"
+    networks:
+      - appnet
+    restart: "no"
+    environment:
+      - VITE_TEMP_API_BASE_URL=${VITE_TEMP_API_BASE_URL}
+      - VITE_AUTH_API_BASE_URL=${VITE_AUTH_API_BASE_URL}
+
+  caddy:
+    image: caddy:2.8
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - frontend_dist:/srv/site:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - appnet
+    depends_on:
+      - frontend-build
 
 volumes:
   postgres_data:
-    name: temp_postgres_data
+  caddy_data:
+  caddy_config:
+  frontend_dist:
 
 networks:
-  temp-network:
+  appnet:
     driver: bridge
-    name: temp_network

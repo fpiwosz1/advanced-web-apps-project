@@ -1,0 +1,29 @@
+advancedwebapps.filippiwosz.eu {
+  encode zstd gzip
+
+  handle /api/v1/auth/* {
+    reverse_proxy auth-service:8081
+  }
+  handle /auth/swagger-ui/* {
+    reverse_proxy auth-service:8081
+  }
+  handle /auth/swagger/* {
+    reverse_proxy auth-service:8081
+  }
+
+  handle /api/v1/* {
+    reverse_proxy temperature-service:8082
+  }
+  handle /temp/swagger-ui/* {
+    reverse_proxy temperature-service:8082
+  }
+  handle /temp/swagger/* {
+    reverse_proxy temperature-service:8082
+  }
+
+  handle {
+    root * /srv/site
+    try_files {path} /index.html
+    file_server
+  }
+}
